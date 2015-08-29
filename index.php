@@ -105,7 +105,7 @@ class GetArticles {
     echo create_menu();
     // error_log(date("Y-m-d H:i:s", time()), 3, "/tmp/log/php/php_errors.log");
     // デバッグ（メニューにアクセスしたら記事取得）
-    // $this->get_articles();
+    $this->get_articles();
   }
 
   /**
@@ -178,7 +178,7 @@ class GetArticles {
           'time' => current_time( 'mysql' ),
         )
       );
-      $url = $this->generate_basic_auth_url($article->image_files_s);
+      $url = $this->generate_basic_auth_url($image_url_array[1][0]);
       $this->set_eyecatch_image( $post_id, $url );
       $i++;
       // 直近10記事を取得
