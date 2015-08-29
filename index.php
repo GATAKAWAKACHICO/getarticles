@@ -178,7 +178,7 @@ class GetArticles {
           'time' => current_time( 'mysql' ),
         )
       );
-      $url = $this->generate_basic_auth_url($article->image_files_s);
+      $url = $this->generate_basic_auth_url($image_url_array[1][0]);
       $this->set_eyecatch_image( $post_id, $url );
       $i++;
       // 直近10記事を取得
