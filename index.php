@@ -105,7 +105,7 @@ class GetArticles {
     echo create_menu();
     // error_log(date("Y-m-d H:i:s", time()), 3, "/tmp/log/php/php_errors.log");
     // デバッグ（メニューにアクセスしたら記事取得）
-    $this->get_articles();
+    // $this->get_articles();
   }
 
   /**
