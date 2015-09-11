@@ -1,8 +1,8 @@
 <?php
 /*
- * Plugin Name: getarticles
- * Description: Get articles from RSS 
- * Version: 0.1
+ * Plugin Name: getarticles (NEWTON)
+ * Description: Get articles from RSS
+ * Version: 0.1-newton
  * Author: Leaf-hide Inc.
  * Author URI: http://llp.leaf-hide.jp/
  * License: GPL2
@@ -17,7 +17,7 @@ require_once(ABSPATH.'wp-admin/includes/taxonomy.php');
 $get_articles = new GetArticles();
 
 class GetArticles {
-  private $menu_title = 'getarticles';
+  private $menu_title = 'getarticles (NEWTON)';
   private $page_title = 'Get articles from RSS';
   private $capability = 'manage_options';
   private $menu_slug = 'getarticles/menu.php';
@@ -72,7 +72,7 @@ class GetArticles {
     $table_name = $wpdb->prefix . GetArticlesOption::TABLE_SUFFIX;
     $charset_collate = $wpdb->get_charset_collate();
     $sql = "CREATE TABLE $table_name (
-      hash varchar(55) DEFAULT '' NOT NULL UNIQUE,
+      hash varchar(128) DEFAULT '' NOT NULL UNIQUE,
       time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL
     ) $charset_collate;";
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -132,6 +132,12 @@ class GetArticles {
   public function generate_basic_auth_url($url) {
     $id = get_option (GetArticlesOption::BASIC_AUTH_ID);
     $pw = get_option (GetArticlesOption::BASIC_AUTH_PW);
+    $url_parsed = parse_url($url);
+    $url = http_build_url($url,
+        array(
+          "query" => $url_parsed["query"].time()
+        )
+      );
     if (!empty($id) && !empty($pw)) {
       $return = http_build_url($url,
         array(
@@ -152,34 +158,35 @@ class GetArticles {
     $table_name = $wpdb->prefix . GetArticlesOption::TABLE_SUFFIX;
     $i = 0;
     foreach ($articles->item as $article) {
-      $results = $wpdb->get_results("SELECT hash FROM $table_name WHERE hash = '$article->hash' LIMIT 1");
+      $results = $wpdb->get_results("SELECT hash FROM $table_name WHERE hash = '$article->guid' LIMIT 1");
       if(count($results) >= 1) {
         $i++;
         continue;
       }
-      $image_url_array = $this->get_image_url_array($article->description_all);
-      $post_content = $this->normalize_html($article->description_all, $image_url_array);
-      $categories = $this->get_category_id_array($article->tag);
+      // $image_url_array = $this->get_image_url_array($article->description_all);
+      // $post_content = $this->normalize_html($article->description_all, $image_url_array);
+      $post_content = $article->description;
+      // $categories = $this->get_category_id_array($article->tag);
       $new_post = array(
         'post_title' => $article->title,
         'post_content'  => $post_content,
         'post_excerpt' => $article->description_summary,
-        'post_category' => $categories,
+        // 'post_category' => $categories,
         'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
       );
       // wp_insert_post() http://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/wp_insert_post
       $post_id = wp_insert_post( $new_post, true);
-      add_post_meta( $post_id, 'hash', (string) $article->hash );
+      add_post_meta( $post_id, 'hash', (string) $article->guid );
       $wpdb->insert(
         $table_name,
         array(
-          'hash' => (string) $article->hash,
+          'hash' => (string) $article->guid,
           'time' => current_time( 'mysql' ),
         )
       );
-      $url = $this->generate_basic_auth_url($image_url_array[1][0]);
-      $this->set_eyecatch_image( $post_id, $url );
+      // $url = $this->generate_basic_auth_url($image_url_array[1][0]);
+      // $this->set_eyecatch_image( $post_id, $url );
       $i++;
       // 直近10記事を取得
       if ($i > 9) { return; }
