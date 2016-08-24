@@ -275,7 +275,7 @@ class GetArticles {
 
   public function detail_tag_to_h3($post_content) {
     $pattern = '/<div class="news_detail_line_(red|orange|green|blue|gray)">(.*?)<\/div>/';
-    $replacement = '<h3>$2</h3>';
+    $replacement = '<h3 style="border-bottom: 1px solid #f1688d; border-left: 10px solid #f1688d; padding: 7px;">$2</h3>';
     $return = preg_replace($pattern, $replacement, $post_content);
     return $return;
   }
