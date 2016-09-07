@@ -160,11 +160,13 @@ class GetArticles {
       $image_url_array = $this->get_image_url_array($article->description_all);
       $post_content = $this->normalize_html($article->description_all, $image_url_array);
       $categories = $this->get_category_id_array($article->tag);
+      $tags = $this->get_tags_string($article->tag);
       $new_post = array(
         'post_title' => $article->title,
         'post_content'  => $post_content,
         'post_excerpt' => $article->description_summary,
         'post_category' => $categories,
+        'tags_input' => $tags,
         'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
       );
@@ -210,6 +212,17 @@ class GetArticles {
       $return = array();
       array_push($return, $category_id);
       return $return;
+    }
+    return "";
+  }
+
+  /**
+   * タグ文字列を返す
+   */
+  public function get_tags_string($tag) {
+    $tags_string = explode(",", $tag);
+    if (count($tags_string) > 3) {
+      return $tags_string[1];
     }
     return "";
   }
