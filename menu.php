@@ -1,7 +1,7 @@
 <?php
 /**
  * 設定画面を表示・保存するクラス
- * 
+ *
  * @author     Masaki Wakatake
  */
 
@@ -49,10 +49,15 @@ function create_menu(){
       </p>
     </form>
     <div>
-      <p>動作確認環境: WordPress 4.3, PHP( 5.3.29 (cgi-fcgi), 5.5.9-1ubuntu4.5 ), <a href="http://php.net/manual/ja/function.simplexml-load-file.php" target="_blank">simplexml_load_file</a>の使用可能な環境</p>
+      <p>動作確認環境: <br>
+        WordPress 4.3, PHP( 5.3.29 (cgi-fcgi), 5.5.9-1ubuntu4.5 ), <br>
+        WordPress 4.8, PHP( 5.6.25, CentOS 6.2 )<br>
+        依存ライブラリ:
+        <a href="https://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/wp_cron" target="_blank">wp_cron</a>,
+        <a href="http://php.net/manual/ja/function.simplexml-load-file.php" target="_blank">simplexml_load_file</a>
+      </p>
       <p>※本プラグインは限られた動作環境において有効です。必ずしも全てのお客様のご利用環境にて動作を保証するものではありません。</p>
     </div>
   </div>
 <?php
 }
-
