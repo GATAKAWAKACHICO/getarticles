@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: getarticles
- * Description: Get articles from RSS 
+ * Description: Get articles from RSS
  * Version: 0.1
  * Author: Leaf-hide Inc.
  * Author URI: http://llp.leaf-hide.jp/
@@ -159,12 +159,12 @@ class GetArticles {
       }
       $image_url_array = $this->get_image_url_array($article->description_all);
       $post_content = $this->normalize_html($article->description_all, $image_url_array);
-      $categories = $this->get_category_id_array($article->tag);
+      $categories = get_category_by_slug('スポット');
       $new_post = array(
         'post_title' => $article->title,
         'post_content'  => $post_content,
         'post_excerpt' => $article->description_summary,
-        'post_category' => $categories,
+        'post_category' => array($categories->term_id),
         'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
       );
@@ -186,8 +186,8 @@ class GetArticles {
     }
   }
 
-  /** 
-   * htmlを標準化する 
+  /**
+   * htmlを標準化する
    **/
   public function normalize_html($post_content, $image_url_array) {
     $post_content = $this->detail_tag_to_h3($post_content);
