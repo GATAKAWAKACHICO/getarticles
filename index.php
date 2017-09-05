@@ -163,7 +163,7 @@ class GetArticles {
       $new_post = array(
         'post_title' => $article->title,
         'post_content'  => $post_content,
-        'post_excerpt' => $article->description_summary,
+        'post_excerpt' => '',
         'post_category' => array($categories->term_id),
         'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
