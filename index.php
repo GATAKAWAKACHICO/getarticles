@@ -232,6 +232,7 @@ class GetArticles {
     file_put_contents($uploadfile, $contents);
     $wp_filetype = wp_check_filetype(basename($filename), null );
     $attachment = array(
+      'guid' => $uploaddir['url'] . '/' . basename( $filename ),
       'post_mime_type' => $wp_filetype['type'],
       'post_title' => $filename,
       'post_content' => '',
@@ -243,7 +244,7 @@ class GetArticles {
     require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
     // Generate the metadata for the attachment, and update the database record.
-    $attach_data = wp_generate_attachment_metadata( $attach_id, $contents );
+    $attach_data = wp_generate_attachment_metadata( $attach_id, $uploadfile );
     wp_update_attachment_metadata( $attach_id, $attach_data );
     return $local_image_url = wp_get_attachment_url($attach_id);
   }
@@ -257,8 +258,9 @@ class GetArticles {
     file_put_contents($uploadfile, $contents);
     $wp_filetype = wp_check_filetype(basename($filename), null );
     $attachment = array(
+      'guid' => $uploaddir['url'] . '/' . basename( $filename ),
       'post_mime_type' => $wp_filetype['type'],
-      'post_title' => $filename,
+      'post_title' => basename($filename),
       'post_content' => '',
       'post_status' => 'inherit'
     );
@@ -268,7 +270,7 @@ class GetArticles {
     require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
     // Generate the metadata for the attachment, and update the database record.
-    $attach_data = wp_generate_attachment_metadata( $attach_id, $contents );
+    $attach_data = wp_generate_attachment_metadata( $attach_id, $uploadfile );
     wp_update_attachment_metadata( $attach_id, $attach_data );
     set_post_thumbnail( $post_id, $attach_id );
   }
