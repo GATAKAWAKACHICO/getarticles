@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: getarticles
- * Description: Get articles from RSS 
+ * Description: Get articles from RSS
  * Version: 0.1
  * Author: Leaf-hide Inc.
  * Author URI: http://llp.leaf-hide.jp/
@@ -103,9 +103,9 @@ class GetArticles {
           wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
     }
     echo create_menu();
-    // error_log(date("Y-m-d H:i:s", time()), 3, "/tmp/log/php/php_errors.log");
+    // error_log(date("Y-m-d H:i:s", time()), 3, "tmp/php_errors.log");
     // デバッグ（メニューにアクセスしたら記事取得）
-    // $this->get_articles();
+    $this->get_articles();
   }
 
   /**
@@ -165,12 +165,13 @@ class GetArticles {
         'post_content'  => $post_content,
         'post_excerpt' => $article->description_summary,
         'post_category' => $categories,
-        'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
+        'post_author'   => 2, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
       );
       // wp_insert_post() http://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/wp_insert_post
       $post_id = wp_insert_post( $new_post, true);
       add_post_meta( $post_id, 'hash', (string) $article->hash );
+      add_post_meta( $post_id, 'delivery_date', (string) date('Y-m-d H:i:s') );
       $wpdb->insert(
         $table_name,
         array(
@@ -186,8 +187,8 @@ class GetArticles {
     }
   }
 
-  /** 
-   * htmlを標準化する 
+  /**
+   * htmlを標準化する
    **/
   public function normalize_html($post_content, $image_url_array) {
     $post_content = $this->detail_tag_to_h3($post_content);
@@ -234,7 +235,7 @@ class GetArticles {
     $attachment = array(
       'guid' => $uploaddir['url'] . '/' . basename( $filename ),
       'post_mime_type' => $wp_filetype['type'],
-      'post_title' => $filename,
+      'post_title' => basename($filename),
       'post_content' => '',
       'post_status' => 'inherit'
     );
@@ -271,6 +272,7 @@ class GetArticles {
 
     // Generate the metadata for the attachment, and update the database record.
     $attach_data = wp_generate_attachment_metadata( $attach_id, $uploadfile );
+    // $attach_data = wp_generate_attachment_metadata( $attach_id, $contents );
     wp_update_attachment_metadata( $attach_id, $attach_data );
     set_post_thumbnail( $post_id, $attach_id );
   }
