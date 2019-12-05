@@ -37,6 +37,7 @@ function create_menu(){
       <p>記事取得時公開ステータス:<br/>
         <input type="radio" name="<?php echo GetArticlesOption::POST_STATUS; ?>" value="draft" <?php echo $checked = get_option( GetArticlesOption::POST_STATUS ) == 'draft' ? "checked": ""; ?>> 下書き
         <input type="radio" name="<?php echo GetArticlesOption::POST_STATUS; ?>" value="publish" <?php echo $checked = get_option( GetArticlesOption::POST_STATUS ) == 'publish' ? "checked": ""; ?>> 公開設定
+        <input type="radio" name="<?php echo GetArticlesOption::POST_STATUS; ?>" value="future" <?php echo $checked = get_option( GetArticlesOption::POST_STATUS ) == 'future' ? "checked": ""; ?>> 予約済み
       </p>
       <p>次回記事取得時刻:<br/>
         <?php $time = wp_next_scheduled( 'get_articles_schedule' );

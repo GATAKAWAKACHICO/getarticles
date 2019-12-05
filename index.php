@@ -169,6 +169,7 @@ class GetArticles {
         'tags_input' => $tags,
         'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
+        'post_date' => $article->showDate
       );
       // wp_insert_post() http://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/wp_insert_post
       $post_id = wp_insert_post( $new_post, true);
