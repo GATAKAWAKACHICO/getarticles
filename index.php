@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: getarticles
- * Description: Get articles from RSS 
+ * Description: Get articles from RSS
  * Version: 0.1
  * Author: Leaf-hide Inc.
  * Author URI: http://llp.leaf-hide.jp/
@@ -105,7 +105,7 @@ class GetArticles {
     echo create_menu();
     // error_log(date("Y-m-d H:i:s", time()), 3, "/tmp/log/php/php_errors.log");
     // デバッグ（メニューにアクセスしたら記事取得）
-    // $this->get_articles();
+    $this->get_articles();
   }
 
   /**
@@ -163,7 +163,7 @@ class GetArticles {
       $new_post = array(
         'post_title' => $article->title,
         'post_content'  => $post_content,
-        'post_excerpt' => $article->description_summary,
+        'post_excerpt' => '',
         'post_category' => $categories,
         'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
@@ -186,8 +186,8 @@ class GetArticles {
     }
   }
 
-  /** 
-   * htmlを標準化する 
+  /**
+   * htmlを標準化する
    **/
   public function normalize_html($post_content, $image_url_array) {
     $post_content = $this->detail_tag_to_h3($post_content);
@@ -206,7 +206,20 @@ class GetArticles {
   public function get_category_id_array($tag) {
     $categories = explode(",", $tag);
     if (count($categories) > 3) {
-      $category_id = wp_create_category($categories[2]);
+      $news_or_column_category = get_category( get_query_var($categories[2] ), false );
+      if($news_or_column_category){
+        $args = array('child_of' => $news_or_column_category->term_id);
+        $categories = get_categories( $args );
+        foreach($categories as $category) {
+          if($category->name == $categories[1]){
+            $category_id = $category->term_id;
+            $return = array();
+            array_push($return, $category_id);
+            return $return;
+          }
+        }
+      }
+      $category_id = wp_create_category($categories[1]);
       $return = array();
       array_push($return, $category_id);
       return $return;
