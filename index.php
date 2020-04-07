@@ -206,19 +206,19 @@ class GetArticles {
   public function get_category_id_array($tag) {
     $categories = explode(",", $tag);
     if (count($categories) > 3) {
-      $news_or_column_category = get_category( get_query_var($categories[2] ), false );
-      if($news_or_column_category){
-        $args = array('child_of' => $news_or_column_category->term_id);
-        $categories = get_categories( $args );
-        foreach($categories as $category) {
-          if($category->name == $categories[1]){
-            $category_id = $category->term_id;
-            $return = array();
-            array_push($return, $category_id);
-            return $return;
-          }
-        }
-      }
+		$news_or_column_category = get_category( get_cat_ID($categories[2] ), false );
+		if($news_or_column_category){
+			$args = array('child_of' => $news_or_column_category->term_id);
+			$categories_obj = get_categories( $args );
+			foreach($categories_obj as $category) {
+				if($category->name === $categories[1]){
+					      $category_id = $category->term_id;
+      					  $return = array();
+                     array_push($return, $category_id);
+                     return $return;
+				}
+			}
+		}
       $category_id = wp_create_category($categories[1]);
       $return = array();
       array_push($return, $category_id);
