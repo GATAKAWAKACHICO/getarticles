@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: getarticles
- * Description: Get articles from RSS 
+ * Description: Get articles from RSS
  * Version: 0.1
  * Author: Leaf-hide Inc.
  * Author URI: http://llp.leaf-hide.jp/
@@ -160,11 +160,13 @@ class GetArticles {
       $image_url_array = $this->get_image_url_array($article->description_all);
       $post_content = $this->normalize_html($article->description_all, $image_url_array);
       $categories = $this->get_category_id_array($article->tag);
+      $tags = $this->get_tag_name($article->tag);
       $new_post = array(
         'post_title' => $article->title,
         'post_content'  => $post_content,
         'post_excerpt' => $article->description_summary,
         'post_category' => $categories,
+        'tags_input' => $tags,
         'post_author'   => 1, // デフォルトはログインユーザー、wp_cronの場合ユーザーIDの数字を指定する必要がある。
         'post_status'   => get_option (GetArticlesOption::POST_STATUS),
       );
@@ -186,7 +188,7 @@ class GetArticles {
     }
   }
 
-  /** 
+  /**
    * htmlを標準化する 
    **/
   public function normalize_html($post_content, $image_url_array) {
@@ -205,11 +207,26 @@ class GetArticles {
    */
   public function get_category_id_array($tag) {
     $categories = explode(",", $tag);
+    $categories_reversed = array_reverse($categories);
     if (count($categories) > 3) {
-      $category_id = wp_create_category($categories[2]);
+      $category_id = wp_create_category($categories_reversed[2]);
       $return = array();
       array_push($return, $category_id);
       return $return;
+    }
+    return "";
+  }
+
+  /**
+   * タグの配列を返す
+   */
+  public function get_tag_name($tag) {
+    $tags = explode(",", $tag);
+    $tags_reversed = array_reverse($tags);
+    if (count($tags) > 3) {
+      array_splice($tags_reversed,0,3);
+      array_pop($tags_reversed);
+      return $tags_reversed;
     }
     return "";
   }
